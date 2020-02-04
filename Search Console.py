@@ -101,8 +101,12 @@ class MyGUI(tk.Tk):
         self.frame_2 = tk.Frame(self, bg='#5DADE2', bd=5)
         self.frame_2.place(relx=0.5, rely=0.45, relwidth=0.75, relheight=0.45, anchor='n')
         self.output_text = tk.StringVar()
-        self.output_label = tk.Label(self.frame_2, textvariable=self.output_text, anchor='nw', justify='left')
+        self.output_label = tk.Listbox(self.frame_2, justify='left')
         self.output_label.place(relwidth=1, relheight=1)
+        self.scrollbar = tk.Scrollbar(self.frame_2)
+        self.scrollbar.place(relx=1, rely=0, relwidth=0.03, relheight=1, anchor='ne')
+        self.output_label.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.config(command=self.output_label.yview)
 
     def date_range(self, start_date, end_date, delta=timedelta(days=1)):
         """
@@ -125,7 +129,10 @@ class MyGUI(tk.Tk):
         :return:
         """
         self.output_text.set(' ')
-        # self.start_progress_bar()
+        self.update_output(' ')
+        self.max_rows = 25000
+        self.i = 0
+        self.output_rows = []
         self.start_date_text = self.start_date_entry.get()
         self.end_date_text = self.end_date_entry.get()
         self.site_url = self.url_entry.get()  #'https://www.samedelman.com/'
@@ -135,6 +142,7 @@ class MyGUI(tk.Tk):
                 self.request_data()
             except GoogleHttpError:
                 messagebox.showerror('URL Invalid', message='The URL you entered in Invalid. Please try again.')
+                self.update_output('URL Invalid')
                 return
         else:
             pass
@@ -176,12 +184,11 @@ class MyGUI(tk.Tk):
 
                 print()
                 if self.response is None:
-                    # print("there is no response")
                     messagebox.showerror('Error', 'No Response from Search Console')
                     break
                 if 'rows' not in self.response:
                     print("row not in response")
-                    self.update_output('Less than 25000 rows for %s' % self.date)
+                    # self.update_output('Less than 25000 rows for %s' % self.date)
                     break
                 else:
                     print('Fetching data for: %s......' % self.date)
@@ -194,7 +201,6 @@ class MyGUI(tk.Tk):
         self.start_progress_bar()
         self.df = pd.DataFrame(self.output_rows, columns=['date', 'query', 'page', 'clicks', 'impressions', 'ctr', 'avg_position'])
         self.export_df()
-        # self.stop_progress_bar()
 
     def check_file(self):
         """
@@ -229,18 +235,9 @@ class MyGUI(tk.Tk):
         self.update_output('Exporting to an Excel File')
         self.start_progress_bar()
         self.df.to_excel(self.file_name, sheet_name='Data', index=False)
-        self.text = 'File: %s was exported. \nSaved here: %s \nTotal no. of Rows and Columns = %s, %s' % (self.file, self.folder, self.rows, self.columns)
-        self.update_output(self.text)
-        # else:
-        #     self.duplicate_box = messagebox.askquestion('Data already present', message='Would you like to replace the data?')
-        #     if self.duplicate_box == 'yes':
-        #         self.update_output('Exporting to an Excel File')
-        #         self.start_progress_bar()
-        #         self.df.to_excel(self.file_name, sheet_name='Data', index=False)
-        #         self.text = 'File: %s was exported. \nSaved here: %s \nTotal no. of Rows and Columns = %s, %s\n \n \n' % (self.file, self.folder, self.rows, self.columns)
-        #         self.update_output(self.text)
-        #     else:
-        #         pass
+        self.update_output('File: %s was exported.' % self.file)
+        self.update_output('Folder: %s' % self.folder)
+        self.update_output('Total no. of Rows and Columns: %s, %s' % (self.rows, self.columns))
 
     def exit_application(self):
         """
@@ -257,9 +254,7 @@ class MyGUI(tk.Tk):
         Updates the output label and adds in a blank line
         :param text: String text to add in to the output label
         """
-        self.current_text = self.output_text.get()
-        self.current_text = '%s\n%s' % (self.current_text, text)
-        self.output_text.set(self.current_text)
+        self.output_label.insert(tk.END, text)
 
     def start_progress_bar(self):
         """
