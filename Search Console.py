@@ -9,6 +9,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from apiclient.discovery import build
 from tkinter import ttk
 from tkinter import messagebox
+from googleapiclient.errors import HttpError as GoogleHttpError
 
 
 class MyGUI(tk.Tk):
@@ -127,10 +128,14 @@ class MyGUI(tk.Tk):
         # self.start_progress_bar()
         self.start_date_text = self.start_date_entry.get()
         self.end_date_text = self.end_date_entry.get()
-        self.site_url = 'https://www.samedelman.com/'  # self.url_entry.get()
+        self.site_url = self.url_entry.get()  #'https://www.samedelman.com/'
         self.proceed = self.check_file()
         if self.proceed:
-            self.request_data()
+            try:
+                self.request_data()
+            except GoogleHttpError:
+                messagebox.showerror('URL Invalid', message='The URL you entered in Invalid. Please try again.')
+                return
         else:
             pass
 
@@ -167,8 +172,8 @@ class MyGUI(tk.Tk):
                     'rowLimit': self.max_rows,
                     'startRow': self.i * self.max_rows
                 }
-
                 self.response = self.webmasters_service.searchanalytics().query(siteUrl=self.site_url, body=self.request).execute()
+
                 print()
                 if self.response is None:
                     # print("there is no response")
