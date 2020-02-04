@@ -127,7 +127,7 @@ class MyGUI(tk.Tk):
         # self.start_progress_bar()
         self.start_date_text = self.start_date_entry.get()
         self.end_date_text = self.end_date_entry.get()
-        self.site_url = self.url_entry.get()  # https://www.samedelman.com/
+        self.site_url = 'https://www.samedelman.com/'  # self.url_entry.get()
         self.proceed = self.check_file()
         if self.proceed:
             self.request_data()
@@ -139,7 +139,6 @@ class MyGUI(tk.Tk):
         Requests data from Search Console
         """
         self.max_rows = 25000
-        self.i = 0
         self.output_rows = []
         try:
             self.start_date = datetime.strptime(self.start_date_text, "%Y-%m-%d")
@@ -153,10 +152,12 @@ class MyGUI(tk.Tk):
         else:
             pass
         for self.date in self.date_range(self.start_date, self.end_date):
+            self.i = 0
             self.date = self.date.strftime("%Y-%m-%d")
             print(self.date)
             self.update_output('Fetching Data for: %s' % self.date)
             while True:
+
                 self.start_progress_bar()
                 self.request = {
                     'startDate': self.date,
@@ -178,6 +179,7 @@ class MyGUI(tk.Tk):
                     self.update_output('Less than 25000 rows for %s' % self.date)
                     break
                 else:
+                    print('Fetching data for: %s......' % self.date)
                     for self.row in self.response['rows']:
                         self.keyword = self.row['keys'][0]
                         self.page = self.row['keys'][1]

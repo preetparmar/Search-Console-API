@@ -1,2 +1,2 @@
-1. DataFrame not appending
+1: DataFrame not appending : Resolved
 2. Handle HttpError
