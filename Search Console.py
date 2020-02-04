@@ -125,9 +125,6 @@ class MyGUI(tk.Tk):
         """
         self.output_text.set(' ')
         # self.start_progress_bar()
-        self.max_rows = 25000
-        self.i = 0
-        self.output_rows = []
         self.start_date_text = self.start_date_entry.get()
         self.end_date_text = self.end_date_entry.get()
         self.site_url = self.url_entry.get()  # https://www.samedelman.com/
@@ -141,6 +138,9 @@ class MyGUI(tk.Tk):
         """
         Requests data from Search Console
         """
+        self.max_rows = 25000
+        self.i = 0
+        self.output_rows = []
         try:
             self.start_date = datetime.strptime(self.start_date_text, "%Y-%m-%d")
             self.end_date = datetime.strptime(self.end_date_text, "%Y-%m-%d")
@@ -156,7 +156,6 @@ class MyGUI(tk.Tk):
             self.date = self.date.strftime("%Y-%m-%d")
             print(self.date)
             self.update_output('Fetching Data for: %s' % self.date)
-            i = 0
             while True:
                 self.start_progress_bar()
                 self.request = {
