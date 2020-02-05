@@ -13,6 +13,10 @@ About the project:
 - I created my own Class in order to make future edits easier and managable.
 - I have also created a GUI using tkinter library in order to make it user friendly.
 - Things I learned during the project:
-	- Google Authorization Requests
+	- Google Authorization Library
 	- Python Libraries: tkinter, pandas, datetime, os
 	- Python Classes
+	- Error Handling
+
+
+Please feel free to leave a feedback at preetparmar@outlook.com
