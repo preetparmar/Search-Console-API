@@ -1,2 +1,18 @@
 # Search-Console-API
-My Custom Script for exporting data from Search Console
+
+Limitations of Search Console Platform:
+- Can't export more than 1000 rows.
+- Can't export data by Day, Keyword, Pages, Device.
+
+Use case for me:
+- Export data broken out by Day, Keyword and Pages for Analysis purpose.
+- Export all the rows in order to do a deep dive analysis
+
+About the project:
+- I have used Python to write this Search Console API which takes the URL, Start Date and End Date from the user.
+- I created my own Class in order to make future edits easier and managable.
+- I have also created a GUI using tkinter library in order to make it user friendly.
+- Things I learned during the project:
+-- Google Authorization Requests
+-- Python Libraries: tkinter, pandas, datetime, os
+-- Python Classes
