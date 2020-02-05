@@ -13,6 +13,6 @@ About the project:
 - I created my own Class in order to make future edits easier and managable.
 - I have also created a GUI using tkinter library in order to make it user friendly.
 - Things I learned during the project:
--- Google Authorization Requests
--- Python Libraries: tkinter, pandas, datetime, os
--- Python Classes
+	- Google Authorization Requests
+	- Python Libraries: tkinter, pandas, datetime, os
+	- Python Classes
