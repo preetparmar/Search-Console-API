@@ -6,7 +6,7 @@ Limitations of Search Console Platform:
 
 Use case for me:
 - Export data broken out by Day, Keyword and Pages for Analysis purpose.
-- Export all the rows in order to do a deep dive analysis
+- Export all the rows _(more than the default 1000)_ in order to do a deep dive analysis.
 
 About the project:
 - I have used Python to write this Search Console API which takes the URL, Start Date and End Date from the user.
