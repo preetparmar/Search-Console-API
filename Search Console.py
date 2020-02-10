@@ -231,13 +231,16 @@ class MyGUI(tk.Tk):
         self.rows, self.columns = self.df.shape
         self.file_name = os.path.join(self.folder, self.file)
         self.all_files = os.listdir(self.folder)
-        # if self.file not in self.all_files:
-        self.update_output('Exporting to an Excel File')
-        self.start_progress_bar()
-        self.df.to_excel(self.file_name, sheet_name='Data', index=False)
-        self.update_output('File: %s was exported.' % self.file)
-        self.update_output('Folder: %s' % self.folder)
-        self.update_output('Total no. of Rows and Columns: %s, %s' % (self.rows, self.columns))
+        if self.rows == 0:
+            self.update_output('No Data for the specified Date Range')
+        else:
+            # if self.file not in self.all_files:
+            self.update_output('Exporting to an Excel File')
+            self.start_progress_bar()
+            self.df.to_excel(self.file_name, sheet_name='Data', index=False)
+            self.update_output('File: %s was exported.' % self.file)
+            self.update_output('Folder: %s' % self.folder)
+            self.update_output('Total no. of Rows and Columns: %s, %s' % (self.rows, self.columns))
 
     def exit_application(self):
         """
