@@ -18,11 +18,13 @@ class MyGUI(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.initialize_tkinter_window()
+        self.url_values = ['Custom URL',
+                           'https://www.samedelman.com/']
         self.create_upper_frame()
         self.create_lower_frame()
         self.connect_to_search_console()
         self.folder = 'P:\Clients\Sam Edelman\Analytics\Data\Search Console'
-        self.all_files = os.listdir(self.folder)
+
 
     def connect_to_search_console(self):
         """
@@ -85,7 +87,8 @@ class MyGUI(tk.Tk):
         self.url_label = tk.Label(self.frame_1, text='Custom URL:', justify='left', anchor='w')
         self.url_label.place(relx=0, rely=0, relwidth=0.43, relheight=0.22)
         self.url_entry = tk.StringVar()
-        self.url_entry = tk.Entry(self.frame_1, bd=1, textvariable=self.url_entry)
+        # self.url_entry = tk.Entry(self.frame_1, bd=1, textvariable=self.url_entry)
+        self.url_entry = ttk.Combobox(self.frame_1, values=self.url_values)
         self.url_entry.place(relx=0.45, rely=0, relwidth=0.54, relheight=0.22)
 
         self.start_date_label = tk.Label(self.frame_1, text='Start Date (YYYY-MM-DD):', justify='left', anchor='w')
@@ -125,6 +128,7 @@ class MyGUI(tk.Tk):
 
     def get_files(self):
         self.clear_output()
+        self.all_files = os.listdir(self.folder)
         for file in self.all_files:
             self.update_output(file)
 
@@ -154,7 +158,7 @@ class MyGUI(tk.Tk):
         self.output_rows = []
         self.start_date_text = self.start_date_entry.get()
         self.end_date_text = self.end_date_entry.get()
-        self.site_url = self.url_entry.get()  #'https://www.samedelman.com/'
+        self.site_url = self.url_entry.get()
         self.proceed = self.check_file()
         if self.proceed:
             try:
@@ -208,8 +212,12 @@ class MyGUI(tk.Tk):
                 if 'rows' not in self.response:
                     print("row not in response")
                     if self.i == 0:
-                        messagebox.showwarning('Data not available', 'No data was exported for %s' % self.date)
-                        self.update_output('0 Rows for %s' % self.date)
+                        self.no_data_question = messagebox.askquestion('Data not available', 'Data not available for %s.\nDo you want to proceed?' % self.date)
+                        if self.no_data_question == 'yes':
+                            self.update_output('0 Rows for %s' % self.date)
+                        else:
+                            # break
+                            self.destroy()  # Throwing Errors
                     # self.update_output('Less than 25000 rows for %s' % self.date)
                     break
                 else:
@@ -235,6 +243,7 @@ class MyGUI(tk.Tk):
         """
         self.file = 'SE_Search_%s_%s.xlsx' % (self.start_date_text, self.end_date_text)
         self.file_name = os.path.join(self.folder, self.file)
+        self.all_files = os.listdir(self.folder)
         if self.file not in self.all_files:
             return True
         else:
