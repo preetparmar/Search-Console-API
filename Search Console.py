@@ -6,7 +6,8 @@ import os
 import pandas as pd
 from datetime import datetime, timedelta
 from google_auth_oauthlib.flow import InstalledAppFlow
-from apiclient.discovery import build
+# from apiclient.discovery import build
+from googleapiclient.discovery import build
 from tkinter import ttk
 from tkinter import messagebox
 from googleapiclient.errors import HttpError as GoogleHttpError
@@ -206,6 +207,9 @@ class MyGUI(tk.Tk):
                     break
                 if 'rows' not in self.response:
                     print("row not in response")
+                    if self.i == 0:
+                        messagebox.showwarning('Data not available', 'No data was exported for %s' % self.date)
+                        self.update_output('0 Rows for %s' % self.date)
                     # self.update_output('Less than 25000 rows for %s' % self.date)
                     break
                 else:
@@ -216,6 +220,8 @@ class MyGUI(tk.Tk):
                         self.output_row = [self.date, self.keyword, self.page, self.row['clicks'], self.row['impressions'], self.row['ctr'], self.row['position']]
                         self.output_rows.append(self.output_row)
                     self.i = self.i + 1
+                self.update_output('%s Rows for %s' % (len(self.output_rows), self.date))
+            self.update_output(' ')
         self.start_progress_bar()
         self.df = pd.DataFrame(self.output_rows, columns=['date', 'query', 'page', 'clicks', 'impressions', 'ctr', 'avg_position'])
         self.export_df()
