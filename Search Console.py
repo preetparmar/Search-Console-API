@@ -20,6 +20,8 @@ class MyGUI(tk.Tk):
         self.create_upper_frame()
         self.create_lower_frame()
         self.connect_to_search_console()
+        self.folder = 'P:\Clients\Sam Edelman\Analytics\Data\Search Console'
+        self.all_files = os.listdir(self.folder)
 
     def connect_to_search_console(self):
         """
@@ -59,9 +61,15 @@ class MyGUI(tk.Tk):
         self.title("Sam Edelman Search Console Data Extract")
         self.canvas = tk.Canvas(self, bg='#D6EAF8')
         self.canvas.place(relwidth=1, relheight=1)
+        
+        self.get_files_button = tk.Button(self, text='Get All Files', command=self.get_files)
+        self.get_files_button.place(relx=0.25, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
+
+        self.clear_output_button = tk.Button(self, text='Clear', command=self.clear_output)
+        self.clear_output_button.place(relx=0.50, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
 
         self.exit_button = tk.Button(self, text='Exit', command=self.exit_application)
-        self.exit_button.place(relx=0.5, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
+        self.exit_button.place(relx=0.75, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
 
         self.progress_bar = ttk.Progressbar(self, orient='horizontal', length=286, mode='determinate')
         self.progress_bar.place(relx=0.5, rely=0.44, relwidth=0.75, relheight=0.05, anchor='n')
@@ -100,13 +108,24 @@ class MyGUI(tk.Tk):
         """
         self.frame_2 = tk.Frame(self, bg='#5DADE2', bd=5)
         self.frame_2.place(relx=0.5, rely=0.45, relwidth=0.75, relheight=0.45, anchor='n')
-        self.output_text = tk.StringVar()
+        
+        # self.output_text = tk.StringVar()
         self.output_label = tk.Listbox(self.frame_2, justify='left')
         self.output_label.place(relwidth=1, relheight=1)
+        
         self.scrollbar = tk.Scrollbar(self.frame_2)
         self.scrollbar.place(relx=1, rely=0, relwidth=0.03, relheight=1, anchor='ne')
+        
         self.output_label.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.output_label.yview)
+
+    def clear_output(self):
+        self.output_label.delete(0, tk.END)
+
+    def get_files(self):
+        self.clear_output()
+        for file in self.all_files:
+            self.update_output(file)
 
     def date_range(self, start_date, end_date, delta=timedelta(days=1)):
         """
@@ -128,7 +147,6 @@ class MyGUI(tk.Tk):
         Fetches the user provided data in the text labels and exports data from Search Console
         :return:
         """
-        self.output_text.set(' ')
         self.update_output(' ')
         self.max_rows = 25000
         self.i = 0
@@ -209,10 +227,8 @@ class MyGUI(tk.Tk):
             True -> File is not present
             False -> File is present
         """
-        self.folder = 'P:\Clients\Sam Edelman\Analytics\Data\Search Console'
         self.file = 'SE_Search_%s_%s.xlsx' % (self.start_date_text, self.end_date_text)
         self.file_name = os.path.join(self.folder, self.file)
-        self.all_files = os.listdir(self.folder)
         if self.file not in self.all_files:
             return True
         else:
