@@ -128,9 +128,13 @@ class MyGUI(tk.Tk):
 
     def get_files(self):
         self.clear_output()
-        self.all_files = os.listdir(self.folder)
-        for file in self.all_files:
-            self.update_output(file)
+        try:
+            self.all_files = os.listdir(self.folder)
+            for file in self.all_files:
+                self.update_output(file)
+        except FileNotFoundError:
+            messagebox.showwarning('File Not Found', 'Can\'t connect to the folder in order to get all the files.')
+            self.update_output('Can\'t connect to the folder')
 
     def date_range(self, start_date, end_date, delta=timedelta(days=1)):
         """
@@ -212,13 +216,8 @@ class MyGUI(tk.Tk):
                 if 'rows' not in self.response:
                     print("row not in response")
                     if self.i == 0:
-                        self.no_data_question = messagebox.askquestion('Data not available', 'Data not available for %s.\nDo you want to proceed?' % self.date)
-                        if self.no_data_question == 'yes':
-                            self.update_output('0 Rows for %s' % self.date)
-                        else:
-                            # break
-                            self.destroy()  # Throwing Errors
-                    # self.update_output('Less than 25000 rows for %s' % self.date)
+                        messagebox.showwarning('Data unavailable', 'Data not available for %s.' % self.date)
+                        self.update_output('0 Rows for %s' % self.date)
                     break
                 else:
                     print('Fetching data for: %s......' % self.date)
