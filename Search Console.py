@@ -24,7 +24,7 @@ class MyGUI(tk.Tk):
         self.create_lower_frame()
         self.connect_to_search_console()
         self.folder = 'P:\Clients\Sam Edelman\Analytics\Data\Search Console'
-
+        self.previous_count = 0
 
     def connect_to_search_console(self):
         """
@@ -66,13 +66,16 @@ class MyGUI(tk.Tk):
         self.canvas.place(relwidth=1, relheight=1)
         
         self.get_files_button = tk.Button(self, text='Get All Files', command=self.get_files)
-        self.get_files_button.place(relx=0.25, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
+        self.get_files_button.place(relx=0.18, rely=0.95, relwidth=0.15, relheight=0.05, anchor='w')
+
+        # self.get_details_button = tk.Button(self, text='Get Details', command=self.get_details)
+        # self.get_details_button.place(relx=0.43, rely=0.95, relwidth=0.15, relheight=0.05, anchor='w')
 
         self.clear_output_button = tk.Button(self, text='Clear', command=self.clear_output)
-        self.clear_output_button.place(relx=0.50, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
+        self.clear_output_button.place(relx=0.43, rely=0.95, relwidth=0.15, relheight=0.05, anchor='w')
 
         self.exit_button = tk.Button(self, text='Exit', command=self.exit_application)
-        self.exit_button.place(relx=0.75, rely=0.97, relwidth=0.15, relheight=0.05, anchor='s')
+        self.exit_button.place(relx=0.68, rely=0.95, relwidth=0.15, relheight=0.05, anchor='w')
 
         self.progress_bar = ttk.Progressbar(self, orient='horizontal', length=286, mode='determinate')
         self.progress_bar.place(relx=0.5, rely=0.44, relwidth=0.75, relheight=0.05, anchor='n')
@@ -135,6 +138,13 @@ class MyGUI(tk.Tk):
         except FileNotFoundError:
             messagebox.showwarning('File Not Found', 'Can\'t connect to the folder in order to get all the files.')
             self.update_output('Can\'t connect to the folder')
+
+    def get_details(self):
+        # self.selected_file = self.output_label.get(tk.ACTIVE)
+        # self.selected_file_path = os.path.join(self.folder, self.selected_file)
+        # self.file_df = pd.read_excel(self.selected_file_path)
+        # self.count = pd.DataFrame.groupby.ag
+        pass
 
     def date_range(self, start_date, end_date, delta=timedelta(days=1)):
         """
@@ -227,7 +237,9 @@ class MyGUI(tk.Tk):
                         self.output_row = [self.date, self.keyword, self.page, self.row['clicks'], self.row['impressions'], self.row['ctr'], self.row['position']]
                         self.output_rows.append(self.output_row)
                     self.i = self.i + 1
-                self.update_output('%s Rows for %s' % (len(self.output_rows), self.date))
+                self.rows_per_date = len(self.output_rows) - self.previous_count
+                self.update_output('%s Rows for %s' % (self.rows_per_date, self.date))
+                self.previous_count = len(self.output_rows)
             self.update_output(' ')
         self.start_progress_bar()
         self.df = pd.DataFrame(self.output_rows, columns=['date', 'query', 'page', 'clicks', 'impressions', 'ctr', 'avg_position'])
